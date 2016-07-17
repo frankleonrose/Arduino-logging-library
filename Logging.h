@@ -52,6 +52,8 @@ extern "C" {
 * <li><b>\%B</b>	like %x but combine with <b>0b</b>10100011</li>
 * <li><b>\%t</b>	replace and convert boolean value into <b>"t"</b> or <b>"f"</b></li>
 * <li><b>\%T</b>	like %t but convert into <b>"true"</b> or <b>"false"</b></li>
+* <li><b>\%f</b>    replace with a double value</li>
+* <li><b>\\%</b>    to escape an % char</li>
 * </ul><br>
 * <b>Loglevels</b><br>
 * <table border="0">
@@ -137,6 +139,7 @@ public:
 
   template <class T> void Debug(T msg, ...){
     if (LOG_LEVEL_DEBUG <= _level) {
+      print (F("DEBUG: "),0);
       va_list args;
       va_start(args, msg);
       print(msg,args);
@@ -156,6 +159,7 @@ public:
 
   template <class T> void Verbose(T msg, ...){
     if (LOG_LEVEL_VERBOSE <= _level) {
+      print (F("VERBOSE: "),0);
       va_list args;
       va_start(args, msg);
       print(msg,args);

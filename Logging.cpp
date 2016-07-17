@@ -14,6 +14,9 @@ void Logging::print(const __FlashStringHelper *format, va_list args) {
       c = pgm_read_byte(p++);
       printFormat(c, &args);
     } else {
+      if (c == '\\') {
+        c = pgm_read_byte(p++);
+      }
       Serial.print(c);
     }
   }
@@ -26,6 +29,9 @@ void Logging::print(const char *format, va_list args) {
       ++format;
       printFormat(*format, &args);
     } else {
+      if (*format == '\\') {
+        ++format;
+      }
       Serial.print(*format);
     }
   }
@@ -100,6 +106,11 @@ void Logging::printFormat(const char format, va_list *args) {
       Serial.print(F("false"));
     }
     return;
+  }
+
+  if ( format == 'f' ) {
+    register double d = va_arg( *args, double );
+    Serial.print(String(d));
   }
 
 }
