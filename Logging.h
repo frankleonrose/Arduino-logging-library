@@ -75,16 +75,16 @@ private:
     int _level;
     long _baud;
 public:
-    /*! 
+    /*!
 	 * default Constructor
 	 */
     Logging(){} ;
-	
-    /** 
-	* Initializing, must be called as first.
-	* \param void
+
+    /**
+	* Initializing, must be called first.
+	* \param level the log level
+	* \param baud the baud rate used to initialize Serial
 	* \return void
-	*
 	*/
 	void Init(int level, long baud);
 	
@@ -100,10 +100,11 @@ public:
 
   template <class T> void Error(T msg, ...){
     if (LOG_LEVEL_ERRORS <= _level) {
-      print (F("ERROR: "),0);
       va_list args;
       va_start(args, msg);
+      print(F("ERROR: "),args); // args unused
       print(msg,args);
+      va_end(args);
     }
   }
 
@@ -123,6 +124,7 @@ public:
       va_list args;
       va_start(args, msg);
       print(msg,args);
+      va_end(args);
     }
   }
 
@@ -139,10 +141,11 @@ public:
 
   template <class T> void Debug(T msg, ...){
     if (LOG_LEVEL_DEBUG <= _level) {
-      print (F("DEBUG: "),0);
       va_list args;
       va_start(args, msg);
+      print(F("DEBUG: "),args); // args unused
       print(msg,args);
+      va_end(args);
     }
   }
 
@@ -159,10 +162,11 @@ public:
 
   template <class T> void Verbose(T msg, ...){
     if (LOG_LEVEL_VERBOSE <= _level) {
-      print (F("VERBOSE: "),0);
       va_list args;
       va_start(args, msg);
+      print (F("VERBOSE: "),args); // args unused
       print(msg,args);
+      va_end(args);
     }
   }
 
