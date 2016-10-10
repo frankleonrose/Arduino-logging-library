@@ -13,18 +13,31 @@ extern "C" {
 }
 
 
-#define LOG_LEVEL_NOOUTPUT 0 
+#define LOG_LEVEL_NOOUTPUT 0
 #define LOG_LEVEL_ERRORS 1
 #define LOG_LEVEL_INFOS 2
 #define LOG_LEVEL_DEBUG 3
 #define LOG_LEVEL_VERBOSE 4
 
 // default loglevel if nothing is set from user
-#define LOGLEVEL LOG_LEVEL_DEBUG 
+#define LOGLEVEL LOG_LEVEL_DEBUG
 
 
 #define CR "\r\n"
 #define LOGGING_VERSION 1
+
+typedef void (*char_printer_fn_t)(const char c);
+class LogPrinter : public Print {
+  char_printer_fn_t _printer;
+public:
+  LogPrinter(char_printer_fn_t printer) {
+    _printer = printer;
+  }
+  virtual size_t write(uint8_t c) {
+    _printer(c);
+    return 1;
+  }
+};
 
 /*!
 * Logging is a helper class to output informations over
@@ -74,6 +87,7 @@ class Logging {
 private:
     int _level;
     long _baud;
+    Print *_printer;
 public:
     /*!
 	 * default Constructor
@@ -87,7 +101,14 @@ public:
 	* \return void
 	*/
 	void Init(int level, long baud);
-	
+
+	/**
+	* Initializing, must be called as first.
+	* \param level the log level
+	* \param printer the function called to print a character, instead of Serial
+	*/
+	void Init(int level, Print &printer);
+
     /**
 	* Output an error message. Output message contains
 	* ERROR: followed by original msg
@@ -179,7 +200,3 @@ private:
 
 extern Logging Log;
 #endif
-
-
-
-

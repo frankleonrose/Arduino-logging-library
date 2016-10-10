@@ -4,6 +4,13 @@ void Logging::Init(int level, long baud){
   _level = constrain(level,LOG_LEVEL_NOOUTPUT,LOG_LEVEL_VERBOSE);
   _baud = baud;
   Serial.begin(_baud);
+  _printer = &Serial;
+}
+
+void Logging::Init(int level, Print &printer){
+  _level = constrain(level,LOG_LEVEL_NOOUTPUT,LOG_LEVEL_VERBOSE);
+  _baud = 0;
+  _printer = &printer;
 }
 
 void Logging::print(const __FlashStringHelper *format, va_list args) {
@@ -17,10 +24,9 @@ void Logging::print(const __FlashStringHelper *format, va_list args) {
       if (c == '\\') {
         c = pgm_read_byte(p++);
       }
-      Serial.print(c);
+      _printer->print(c);
     }
   }
-
 }
 
 void Logging::print(const char *format, va_list args) {
@@ -32,7 +38,7 @@ void Logging::print(const char *format, va_list args) {
       if (*format == '\\') {
         ++format;
       }
-      Serial.print(*format);
+      _printer->print(*format);
     }
   }
 }
@@ -41,86 +47,78 @@ void Logging::printFormat(const char format, va_list *args) {
   if (format == '\0') return;
 
   if (format == '%') {
-    Serial.print(format);
+    _printer->print(format);
     return;
   }
 
   if( format == 's' ) {
     register char *s = (char *)va_arg( *args, int );
-    Serial.print(s);
+    _printer->print(s);
     return;
   }
 
   if( format == 'd' || format == 'i') {
-    Serial.print(va_arg( *args, int ),DEC);
+    _printer->print(va_arg( *args, int ),DEC);
     return;
   }
 
   if( format == 'x' ) {
-    Serial.print(va_arg( *args, int ),HEX);
+    _printer->print(va_arg( *args, int ),HEX);
     return;
   }
 
   if( format == 'X' ) {
-    Serial.print("0x");
-    Serial.print(va_arg( *args, int ),HEX);
+    _printer->print("0x");
+    _printer->print(va_arg( *args, int ),HEX);
     return;
   }
 
   if( format == 'b' ) {
-    Serial.print(va_arg( *args, int ),BIN);
+    _printer->print(va_arg( *args, int ),BIN);
     return;
   }
 
   if( format == 'B' ) {
-    Serial.print("0b");
-    Serial.print(va_arg( *args, int ),BIN);
+    _printer->print("0b");
+    _printer->print(va_arg( *args, int ),BIN);
     return;
   }
 
   if( format == 'l' ) {
-    Serial.print(va_arg( *args, long ),DEC);
+    _printer->print(va_arg( *args, long ),DEC);
     return;
   }
 
   if( format == 'c' ) {
-    Serial.print(va_arg( *args, int ));
+    _printer->print(va_arg( *args, int ));
     return;
   }
 
   if( format == 't' ) {
     if (va_arg( *args, int ) == 1) {
-      Serial.print("T");
+      _printer->print("T");
     }
     else {
-      Serial.print("F");
+      _printer->print("F");
     }
     return;
   }
 
   if( format == 'T' ) {
     if (va_arg( *args, int ) == 1) {
-      Serial.print(F("true"));
+      _printer->print(F("true"));
     }
     else {
-      Serial.print(F("false"));
+      _printer->print(F("false"));
     }
     return;
   }
 
   if ( format == 'f' ) {
     register double d = va_arg( *args, double );
-    Serial.print(String(d));
+    _printer->print(String(d));
   }
 
 }
 
  Logging Log = Logging();
-
- 
- 
-  
-
-
-
-
