@@ -39,6 +39,33 @@ public:
   }
 };
 
+typedef void (*string_printer_fn_t)(const char *s);
+class LogBufferedPrinter : public Print {
+  string_printer_fn_t _printer;
+	char *_buffer;
+	size_t _size;
+	size_t _index;
+public:
+  LogBufferedPrinter(string_printer_fn_t printer, char *buffer, size_t size) {
+		// assert(printer!=NULL);
+		// assert(buffer!=NULL);
+		// assert(size>1);
+    _printer = printer;
+		_buffer = buffer;
+		_size = size;
+  }
+  virtual size_t write(uint8_t c) {
+		_buffer[_index++] = c;
+		if (c=='\n' || (_index+1)==_size) {
+			_buffer[_index] = 0;
+			_printer(_buffer);
+			_index = 0;
+		}
+    return 1;
+  }
+};
+
+
 /*!
 * Logging is a helper class to output informations over
 * RS232. If you know log4j or log4net, this logging class

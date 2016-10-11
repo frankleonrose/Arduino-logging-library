@@ -10,7 +10,7 @@
 // You could do other things in here, like print output to two or more
 // destinations. For instance, this capability was developed to send log
 // messages over BLE to a listening iPhone app.
-void conditionalLog(const char c) {
+void charPrinter(const char c) {
     // If you disconnect a USB cable, Serial becomes inoperative and on some
     // boards will hangs. In order to freely disconnect a running board,
     // we check whether Serial is active before trying to print.
@@ -19,7 +19,20 @@ void conditionalLog(const char c) {
     }
 }
 
-LogPrinter safePrinter(conditionalLog);
+// This is our print function that outputs a null terminated string.
+void stringPrinter(const char *s) {
+    if (Serial) {
+      Serial.print(s);
+    }
+}
+
+
+LogPrinter CharacterPrinter(charPrinter);
+Logging LogSlow;
+
+char buffer[100];
+LogBufferedPrinter StringPrinter(stringPrinter, buffer, sizeof(buffer));
+Logging LogFast;
 
 void setup() {
     // Since we're telling the Log library to call us back
@@ -27,18 +40,24 @@ void setup() {
     Serial.begin(38400L);
 
     // Now we initialize the Log library with our own printer...
-    Log.Init(LOGLEVEL, safePrinter);
+    LogSlow.Init(LOGLEVEL, CharacterPrinter);
+    LogFast.Init(LOGLEVEL, StringPrinter);
 
     // And everything works normally...
-    Log.Info("Setup complete."CR);
+    LogSlow.Info("Setup complete."CR);
+    LogFast.Info("Setup complete."CR);
 }
 
 int counter = 0;
 bool toggle = false;
 
 void loop() {
-    Log.Info("Loop counter: %d"CR, counter++);
-    Log.Error("This is an error message? %T"CR, toggle = !toggle);
-    Log.Debug("This is debug info: %x, %t"CR, counter, toggle);
-    delay(5000);
+    LogSlow.Info("Loop counter: %d"CR, counter++);
+    LogSlow.Error("This is an error message? %T"CR, toggle = !toggle);
+    LogSlow.Debug("Slow (character) printer debug info: %x, %t"CR, counter, toggle);
+    delay(2000);
+    LogFast.Info("Loop counter: %d"CR, counter++);
+    LogFast.Error("This is an error message? %T"CR, toggle = !toggle);
+    LogFast.Debug("Buffered printer debug info: %x, %t"CR, counter, toggle);
+    delay(2000);
 }
