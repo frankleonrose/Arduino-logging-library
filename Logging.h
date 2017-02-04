@@ -15,9 +15,10 @@ extern "C" {
 
 #define LOG_LEVEL_NOOUTPUT 0
 #define LOG_LEVEL_ERRORS 1
-#define LOG_LEVEL_INFOS 2
-#define LOG_LEVEL_DEBUG 3
-#define LOG_LEVEL_VERBOSE 4
+#define LOG_LEVEL_WARNINGS 2
+#define LOG_LEVEL_INFOS 3
+#define LOG_LEVEL_DEBUG 4
+#define LOG_LEVEL_VERBOSE 5
 
 // default loglevel if nothing is set from user
 #define LOGLEVEL LOG_LEVEL_DEBUG
@@ -136,7 +137,7 @@ public:
 	*/
 	void Init(int level, Print &printer);
 
-    /**
+/**
 	* Output an error message. Output message contains
 	* ERROR: followed by original msg
 	* Error messages are printed out, at every loglevel
@@ -146,15 +147,36 @@ public:
 	* \return void
 	*/
 
-  template <class T> void Error(T msg, ...){
-    if (LOG_LEVEL_ERRORS <= _level) {
-      va_list args;
-      va_start(args, msg);
-      print(F("ERROR: "),args); // args unused
-      print(msg,args);
-      va_end(args);
-    }
-  }
+	template <class T> void Error(T msg, ...){
+		if (LOG_LEVEL_ERRORS <= _level) {
+			va_list args;
+			va_start(args, msg);
+			print(F("ERROR: "),args); // args unused
+			print(msg,args);
+			va_end(args);
+		}
+	}
+
+
+/**
+	* Output a warning message. Output message contains
+	* WARNING: followed by original msg
+	* Warning messages are printed out at l
+	* loglevels >= LOG_LEVEL_WARNINGS
+	* \param msg format string to output
+	* \param ... any number of variables
+	* \return void
+	*/
+
+	template <class T> void Warn(T msg, ...){
+		if (LOG_LEVEL_WARNINGS <= _level) {
+			va_list args;
+			va_start(args, msg);
+			print(F("WARNING: "),args); // args unused
+			print(msg,args);
+			va_end(args);
+		}
+	}
 
 
     /**
