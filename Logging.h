@@ -218,6 +218,15 @@ public:
       va_end(args);
     }
   }
+	// Allows continued debug messages with no "DEBUG:" prefix
+	template <class T> void Debug_(T msg, ...){
+		if (LOG_LEVEL_DEBUG <= _level) {
+      va_list args;
+      va_start(args, msg);
+      print(msg,args);
+      va_end(args);
+    }
+  }
 
 
     /**
