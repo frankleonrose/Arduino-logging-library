@@ -213,7 +213,7 @@ public:
     if (LOG_LEVEL_DEBUG <= _level) {
       va_list args;
       va_start(args, msg);
-      print(F("DEBUG: "),args); // args unused
+      print(F("debug: "),args); // args unused
       print(msg,args);
       va_end(args);
     }
@@ -243,7 +243,7 @@ public:
     if (LOG_LEVEL_VERBOSE <= _level) {
       va_list args;
       va_start(args, msg);
-      print (F("VERBOSE: "),args); // args unused
+      print (F("verbose: "),args); // args unused
       print(msg,args);
       va_end(args);
     }
