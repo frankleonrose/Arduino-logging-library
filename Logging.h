@@ -242,7 +242,7 @@ private:
     #if !defined(PLATFORM_NATIVE)
     void print(const __FlashStringHelper *format, va_list args);
     #endif
-    void printFormat(const char format, va_list *args);
+    void printFormat(const char format, va_list *args, const int len);
 };
 
 extern Logging Log;

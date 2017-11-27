@@ -12,7 +12,12 @@ void Logging::print(const __FlashStringHelper *format, va_list args) {
   for(;c != 0; c = pgm_read_byte(p++)){
     if (c == '%') {
       c = pgm_read_byte(p++);
-      printFormat(c, &args);
+      int len = 0;
+      if (c == '*') {
+        len = va_arg( args, int );
+        c = pgm_read_byte(p++);
+      }
+      printFormat(c, &args, len);
     } else {
       if (c == '\\') {
         c = pgm_read_byte(p++);
@@ -33,7 +38,12 @@ void Logging::print(const char *format, va_list args_in) {
   for (; *format != 0; ++format) {
     if (*format == '%') {
       ++format;
-      printFormat(*format, &args);
+      int len = 0;
+      if (*format == '*') {
+        len = va_arg( args, int );
+        ++format;
+      }
+      printFormat(*format, &args, len);
     } else {
       if (*format == '\\') {
         ++format;
@@ -46,7 +56,7 @@ void Logging::print(const char *format, va_list args_in) {
   #endif
 }
 
-void Logging::printFormat(const char format, va_list *args) {
+void Logging::printFormat(const char format, va_list *args, const int len) {
   if (format == '\0') return;
 
   if (format == '%') {
@@ -62,6 +72,23 @@ void Logging::printFormat(const char format, va_list *args) {
 
   if( format == 'd' || format == 'i') {
     _printer->print(va_arg( *args, int ),DEC);
+    return;
+  }
+
+  if( format == 'm' || format == 'M' ) {
+    // Print a hex string of len bytes
+    uint8_t *p = va_arg( *args, uint8_t * )
+    if( format == 'M' ) {
+      // Prefix hex bytes with address
+      _printer->print((uint32_t)p, HEX);
+      _printer->print(": ");
+    }
+    for (int i = 0; i<len; ++i) {
+      if (p[i]<16) {
+        _printer->print('0');
+      }
+      _printer->print(p[i], HEX);
+    }
     return;
   }
 
