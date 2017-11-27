@@ -77,10 +77,10 @@ void Logging::printFormat(const char format, va_list *args, const int len) {
 
   if( format == 'm' || format == 'M' ) {
     // Print a hex string of len bytes
-    uint8_t *p = va_arg( *args, uint8_t * )
+    uint8_t *p = va_arg( *args, uint8_t * );
     if( format == 'M' ) {
       // Prefix hex bytes with address
-      _printer->print((uint32_t)p, HEX);
+      _printer->print((unsigned int)((size_t)p), HEX);
       _printer->print(": ");
     }
     for (int i = 0; i<len; ++i) {
