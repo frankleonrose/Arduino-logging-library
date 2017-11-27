@@ -5,6 +5,7 @@ void Logging::Init(int level, Print &printer){
   _printer = &printer;
 }
 
+#if !defined(PLATFORM_NATIVE)
 void Logging::print(const __FlashStringHelper *format, va_list args) {
   PGM_P p = reinterpret_cast<PGM_P>(format);
   char c = pgm_read_byte(p++);
@@ -20,8 +21,15 @@ void Logging::print(const __FlashStringHelper *format, va_list args) {
     }
   }
 }
+#endif
 
-void Logging::print(const char *format, va_list args) {
+void Logging::print(const char *format, va_list args_in) {
+  #if defined(PLATFORM_NATIVE)
+  va_list args;
+  va_copy(args, args_in);
+  #else
+  va_list &args = args_in;
+  #endif
   for (; *format != 0; ++format) {
     if (*format == '%') {
       ++format;
@@ -33,6 +41,9 @@ void Logging::print(const char *format, va_list args) {
       _printer->print(*format);
     }
   }
+  #if defined(PLATFORM_NATIVE)
+  va_end(args);
+  #endif
 }
 
 void Logging::printFormat(const char format, va_list *args) {
@@ -44,7 +55,7 @@ void Logging::printFormat(const char format, va_list *args) {
   }
 
   if( format == 's' ) {
-    register char *s = (char *)va_arg( *args, int );
+    char *s = (char *)va_arg( *args, char * );
     _printer->print(s);
     return;
   }
@@ -107,8 +118,12 @@ void Logging::printFormat(const char format, va_list *args) {
   }
 
   if ( format == 'f' ) {
-    register double d = va_arg( *args, double );
+    double d = va_arg( *args, double );
+  #if defined(PLATFORM_NATIVE)
+    _printer->print(F("Unimplemented"));
+  #else
     _printer->print(String(d));
+  #endif
   }
 
 }
