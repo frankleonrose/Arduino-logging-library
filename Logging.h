@@ -1,5 +1,6 @@
 #ifndef LOGGING_H
 #define LOGGING_H
+
 #include <inttypes.h>
 #include <stdarg.h>
 #if defined(ARDUINO) && ARDUINO >= 100
@@ -7,11 +8,6 @@
 #else
 	#include "WProgram.h"
 #endif
-//#include "pins_arduino.h"
-extern "C" {
-  #include <avr/io.h>
-}
-
 
 #define LOG_LEVEL_NOOUTPUT 0
 #define LOG_LEVEL_ERRORS 1
@@ -108,27 +104,18 @@ public:
 * <h1>History</h1><br>
 * <table border="0">
 * <tr><td>01 FEB 2012</td><td>initial release</td></tr>
-* <tr><td>06 MAR 2012</td><td>implement a preinstanciate object (like in Wire, ...)</td></tr>
-* <tr><td></td><td>methode init get now loglevel and baud parameter</td></tr>
+* <tr><td>06 MAR 2012</td><td>implement a preinstanciated object (like in Wire, ...)</td></tr>
+* <tr><td></td><td>method init get now loglevel and baud parameter</td></tr>
 */
 class Logging {
 private:
     int _level;
-    long _baud;
     Print *_printer;
 public:
     /*!
 	 * default Constructor
 	 */
     Logging(){} ;
-
-    /**
-	* Initializing, must be called first.
-	* \param level the log level
-	* \param baud the baud rate used to initialize Serial
-	* \return void
-	*/
-	void Init(int level, long baud);
 
 	/**
 	* Initializing, must be called as first.

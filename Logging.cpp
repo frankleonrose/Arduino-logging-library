@@ -1,15 +1,7 @@
 #include "Logging.h"
 
-void Logging::Init(int level, long baud){
-  _level = constrain(level,LOG_LEVEL_NOOUTPUT,LOG_LEVEL_VERBOSE);
-  _baud = baud;
-  Serial.begin(_baud);
-  _printer = &Serial;
-}
-
 void Logging::Init(int level, Print &printer){
   _level = constrain(level,LOG_LEVEL_NOOUTPUT,LOG_LEVEL_VERBOSE);
-  _baud = 0;
   _printer = &printer;
 }
 
