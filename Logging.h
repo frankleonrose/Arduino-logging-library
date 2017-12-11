@@ -143,6 +143,11 @@ public:
 			va_end(args);
 		}
 	}
+  template <class T> void ErrorArgs(T msg, va_list args) {
+		if (LOG_LEVEL_ERRORS <= _level) {
+      print(msg,args);
+    }
+  }
 
 
 /**
@@ -164,6 +169,11 @@ public:
 			va_end(args);
 		}
 	}
+  template <class T> void WarnArgs(T msg, va_list args) {
+		if (LOG_LEVEL_WARNINGS <= _level) {
+      print(msg,args);
+    }
+  }
 
 
     /**
@@ -182,6 +192,11 @@ public:
       va_start(args, msg);
       print(msg,args);
       va_end(args);
+    }
+  }
+  template <class T> void InfoArgs(T msg, va_list args) {
+		if (LOG_LEVEL_INFOS <= _level) {
+      print(msg,args);
     }
   }
 
@@ -214,6 +229,11 @@ public:
       va_end(args);
     }
   }
+  template <class T> void DebugArgs(T msg, va_list args) {
+		if (LOG_LEVEL_DEBUG <= _level) {
+      print(msg,args);
+    }
+  }
 
 
     /**
@@ -233,6 +253,11 @@ public:
       print (F("verbose: "),args); // args unused
       print(msg,args);
       va_end(args);
+    }
+  }
+  template <class T> void VerboseArgs(T msg, va_list args) {
+		if (LOG_LEVEL_VERBOSE <= _level) {
+      print(msg,args);
     }
   }
 
