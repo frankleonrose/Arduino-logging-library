@@ -17,7 +17,9 @@
 #define LOG_LEVEL_VERBOSE 5
 
 // default loglevel if nothing is set from user
+#ifndef LOGLEVEL
 #define LOGLEVEL LOG_LEVEL_DEBUG
+#endif
 
 
 #define CR "\r\n"
