@@ -124,6 +124,11 @@ void Logging::printFormat(const char format, va_list *args, const int len) {
     return;
   }
 
+  if( format == 'p' ) {
+    _printer->print((unsigned long)va_arg( *args, void * ),HEX);
+    return;
+  }
+
   if( format == 't' ) {
     if (va_arg( *args, int ) == 1) {
       _printer->print("T");
