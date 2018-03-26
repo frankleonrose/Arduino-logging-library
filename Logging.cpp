@@ -17,6 +17,16 @@ void Logging::print(const __FlashStringHelper *format, va_list args) {
         len = va_arg( args, int );
         c = pgm_read_byte(p++);
       }
+      else if (c == 'l') {
+        len = -1;
+        c = pgm_read_byte(p++);
+      }
+      else {
+        while (c >= '0' && c <= '9') {
+          len = 10 * len + (c - '0');
+          c = pgm_read_byte(p++);
+        }
+      }
       printFormat(c, &args, len);
     } else {
       if (c == '\\') {
@@ -42,6 +52,16 @@ void Logging::print(const char *format, va_list args_in) {
       if (*format == '*') {
         len = va_arg( args, int );
         ++format;
+      }
+      else if (*format == 'l') {
+        len = -1;
+        ++format;
+      }
+      else {
+        while (*format >= '0' && *format <= '9') {
+          len = 10 * len + (*format - '0');
+          ++format;
+        }
       }
       printFormat(*format, &args, len);
     } else {
@@ -71,7 +91,22 @@ void Logging::printFormat(const char format, va_list *args, const int len) {
   }
 
   if( format == 'd' || format == 'i') {
-    _printer->print(va_arg( *args, int ),DEC);
+    if (len==-1) {
+      _printer->print(va_arg( *args, long int ),DEC);
+    }
+    else {
+      _printer->print(va_arg( *args, int ),DEC);
+    }
+    return;
+  }
+
+  if( format == 'u' || format == 'i') {
+    if (len==-1) {
+      _printer->print(va_arg( *args, unsigned long int ),DEC);
+    }
+    else {
+      _printer->print(va_arg( *args, unsigned int ),DEC);
+    }
     return;
   }
 
@@ -93,13 +128,23 @@ void Logging::printFormat(const char format, va_list *args, const int len) {
   }
 
   if( format == 'x' ) {
-    _printer->print(va_arg( *args, int ),HEX);
+    if (len==-1) {
+      _printer->print(va_arg( *args, long int ),HEX);
+    }
+    else {
+      _printer->print(va_arg( *args, int ),HEX);
+    }
     return;
   }
 
   if( format == 'X' ) {
     _printer->print("0x");
-    _printer->print(va_arg( *args, int ),HEX);
+    if (len==-1) {
+      _printer->print(va_arg( *args, long int ),HEX);
+    }
+    else {
+      _printer->print(va_arg( *args, int ),HEX);
+    }
     return;
   }
 
@@ -111,11 +156,6 @@ void Logging::printFormat(const char format, va_list *args, const int len) {
   if( format == 'B' ) {
     _printer->print("0b");
     _printer->print(va_arg( *args, int ),BIN);
-    return;
-  }
-
-  if( format == 'l' ) {
-    _printer->print(va_arg( *args, long ),DEC);
     return;
   }
 
