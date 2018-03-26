@@ -201,7 +201,7 @@ void Logging::printFormat(const char format, va_list *args, const int len) {
   if ( format == 'f' ) {
     double d = va_arg( *args, double );
   #if defined(PLATFORM_NATIVE)
-    _printer->print(F("Unimplemented"));
+    _printer->print(std::to_string(d).c_str());
   #else
     _printer->print(String(d));
   #endif
