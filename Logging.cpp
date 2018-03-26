@@ -86,6 +86,15 @@ void Logging::printFormat(const char format, va_list *args, const int len) {
 
   if( format == 's' ) {
     char *s = (char *)va_arg( *args, char * );
+    if (s!=NULL) {
+      // Pad string if necessary.
+      size_t slen = strlen(s);
+      if (slen<len) {
+        for (int i=0; i<(len-slen); ++i) {
+          _printer->print(" ");
+        }
+      }
+    }
     _printer->print(s);
     return;
   }
